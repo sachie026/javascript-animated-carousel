@@ -5,13 +5,43 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <link rel="stylesheet" href="/css/index.css" />
   </head>
+
   <body class="bg">
-    <section class="slider-wrapper">
-      <button class="slide-arrow" id="slide-arrow-prev">Prev</button>
-      <button class="slide-arrow" id="slide-arrow-next">Next</button>
+    <div class="loading-screen">
+      <img src="/images/monk.png" class="monk zoom-in-out-box" />
+      <div class="typewriter">
+        <h1>Patience, young padawan...</h1>
+      </div>
+    </div>
+    <div class="content-to-show">
+      <button class="slide-arrow" id="slide-arrow-prev">
+        <i class="arrow left"></i>
+      </button>
+
+      <button class="slide-arrow" id="slide-arrow-next">
+        <i class="arrow right"></i>
+      </button>
+
       <div id="information"></div>
-      <ul id="step-details"></ul>
-    </section>
+      <div class="footer">
+        <ul id="step-list">
+          <li></li>
+          <li>1</li>
+          <li>2</li>
+          <li>3</li>
+          <li>4</li>
+          <li>5</li>
+          <li>6</li>
+          <li>7</li>
+          <li>8</li>
+          <li></li>
+        </ul>
+        <div id="step-details"></div>
+      </div>
+
+      <embed id="logo" src="images/logo.svg" />
+    </div>
+
     <script src="/js/index.js"></script>
   </body>
 </html>
