@@ -14,6 +14,7 @@ var mime = {
   png: "image/png",
   svg: "image/svg+xml",
   js: "application/javascript",
+  woff: "application/font-woff woff",
 };
 
 function onNotFound(res) {
@@ -34,6 +35,26 @@ function onJsCssPath(res, pathname, m) {
   if (stats && stats.isFile()) {
     res.writeHead(200, {
       "Content-Type": m[1] === "js" ? mime.js : mime.css,
+    });
+    fs.createReadStream(filename).pipe(res);
+    return;
+  }
+}
+
+function onWoffPath(res, pathname, m) {
+  var filename = dir + pathname;
+  var stats = fs.existsSync(filename) && fs.statSync(filename);
+  var ext = path.extname(filename).slice(1);
+
+  const contentType =
+    ext === "woff"
+      ? {
+          "Content-Type": mime.woff,
+        }
+      : {};
+  if (stats && stats.isFile()) {
+    res.writeHead(200, {
+      ...contentType,
     });
     fs.createReadStream(filename).pipe(res);
     return;
@@ -69,6 +90,8 @@ http
       onJsCssPath(res, pathname, m);
     } else if ((m = pathname.match(/^\/(images)\//))) {
       onImages(res, pathname, m);
+    } else if ((m = pathname.match(/^\/(font)\//))) {
+      onWoffPath(res, pathname, m);
     } else {
       onNotFound(res);
     }

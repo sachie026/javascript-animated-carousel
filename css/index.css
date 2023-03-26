@@ -1,17 +1,43 @@
+@font-face {
+  font-family: "klavika-Bold";
+  src: url(/font/klavika-bold-webfont.woff) format("woff");
+}
+
+@font-face {
+  font-family: "klavika-Light";
+  src: url(/font/klavika-light-webfont.woff) format("woff");
+}
+
+@font-face {
+  font-family: "klavika-Medium";
+  src: url(/font/klavika-medium-webfont.woff) format("woff");
+}
+
+@font-face {
+  font-family: "klavika-Regular";
+  src: url(/font/klavika-regular-webfont.woff) format("woff");
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 * {
   box-sizing: border-box;
 }
 
-.bg {
+a {
+  color: white;
+}
+
+.page-background {
   background-image: url("/images/background.jpg");
+  background-color: black;
   height: 100%;
   background-position: 0% 0%;
   background-repeat: no-repeat;
@@ -26,14 +52,28 @@ body {
   height: 90px;
 }
 
+@keyframes fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 #information {
   font-size: 48px;
   text-transform: uppercase;
   color: white;
-  font-family: sans-serif;
   position: absolute;
   width: 350px;
-  top: 46%;
+  top: 44%;
+  font-family: "klavika-Light";
+  opacity: 0.8;
+  animation: fade 2s linear;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
 }
 
 .slide-arrow {
@@ -79,6 +119,8 @@ body {
   display: flex;
   margin: 0;
   padding: 0;
+  font-family: "klavika-Light";
+  font-size: 12px;
 }
 
 #step-list li {
@@ -86,7 +128,7 @@ body {
   border-right: 1px dotted;
 }
 
-.footer {
+.step-footer {
   position: absolute;
   bottom: 20px;
   left: 20px;
@@ -96,6 +138,8 @@ body {
 #step-details {
   margin-left: 24px;
   color: white;
+  font-size: 12px;
+  font-family: "klavika-Light";
 }
 
 .arrow {
@@ -114,6 +158,35 @@ body {
 .left {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
+}
+
+#summary {
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  right: 0px;
+  padding: 24px;
+  width: auto;
+  background: black;
+  color: white;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+}
+
+.summary-header {
+  height: 50%;
+  padding: 12px 24px;
+  font-size: 48px;
+  font-family: "klavika-Regular";
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+}
+
+.summary-main {
+  font-size: 12px;
+  font-family: "klavika-Light";
 }
 
 .content-to-show {
@@ -190,11 +263,13 @@ body {
   white-space: nowrap;
   margin: 0 auto;
   letter-spacing: 0.15em;
-  animation: typing 3s steps(100%, end), step-end;
+  animation: typing 3.5s linear;
   font-size: 16px;
   color: white;
   position: fixed;
   width: 280px;
+  font-family: "klavika-Light";
+  font-style: italic;
 }
 
 @keyframes typing {

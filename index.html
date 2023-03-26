@@ -6,40 +6,47 @@
     <link rel="stylesheet" href="/css/index.css" />
   </head>
 
-  <body class="bg">
+  <body class="page-background">
     <div class="loading-screen">
       <img src="/images/monk.png" class="monk zoom-in-out-box" />
       <div class="typewriter">
-        <h1>Patience, young padawan...</h1>
+        <h1 id="patienceText">Patience!</h1>
       </div>
     </div>
+
     <div class="content-to-show">
       <button class="slide-arrow" id="slide-arrow-prev">
         <i class="arrow left"></i>
       </button>
-
       <button class="slide-arrow" id="slide-arrow-next">
         <i class="arrow right"></i>
       </button>
 
       <div id="information"></div>
-      <div class="footer">
+      <div class="step-footer">
         <ul id="step-list">
           <li></li>
-          <li>1</li>
-          <li>2</li>
-          <li>3</li>
-          <li>4</li>
-          <li>5</li>
-          <li>6</li>
-          <li>7</li>
-          <li>8</li>
+          <li onclick="onStepClick(1)">1</li>
+          <li onclick="onStepClick(2)">2</li>
+          <li onclick="onStepClick(3)">3</li>
+          <li onclick="onStepClick(4)">4</li>
+          <li onclick="onStepClick(5)">5</li>
+          <li onclick="onStepClick(6)">6</li>
+          <li onclick="onStepClick(7)">7</li>
+          <li onclick="onStepClick(8)">8</li>
           <li></li>
         </ul>
         <div id="step-details"></div>
       </div>
-
       <embed id="logo" src="images/logo.svg" />
+    </div>
+
+    <div id="summary">
+      <div class="summary-header">BECOME A MONK</div>
+      <div class="summary-main">
+        Interesting in joining our monastery? <br />
+        Check out our current openings on <a href="#">mediamonks.com/careers</a>
+      </div>
     </div>
 
     <script src="/js/index.js"></script>

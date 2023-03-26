@@ -1,4 +1,4 @@
-const DEFAULT_STEP_MOVE = 13;
+const DEFAULT_STEP_MOVE = 12;
 const TOTAL_STEP = 8;
 const STEP_INFO = [
   "talent is given true skill is earned",
@@ -12,34 +12,41 @@ const STEP_INFO = [
 ];
 const LEFT_INFO = [1, 2, 6, 7, 8];
 const RIGHT_INFO = [3, 4, 5];
-const INFO_MARGIN = "100px";
+const INFO_MARGIN = "75px";
 const UNSET = "unset";
 
 let position = 0;
-let intervalVar = null;
+let prevButtonInterval = null;
+let nextButtonInterval = null;
+let loadingScreenTimeout = null;
+let patienceTextTimeout = null;
 
 // Get all the elements
 const slide = document.querySelector(".slide");
 const prevButton = document.getElementById("slide-arrow-prev");
 const nextButton = document.getElementById("slide-arrow-next");
-const bg = document.getElementsByClassName("bg")[0];
+const bg = document.getElementsByClassName("page-background")[0];
 const liItems = document.getElementsByTagName("li");
 const infoDiv = document.getElementById("information");
 const stepDetails = document.getElementById("step-details");
 const loadingScreen = document.getElementsByClassName("loading-screen")[0];
 const contentToShow = document.getElementsByClassName("content-to-show")[0];
+const patienceText = document.getElementById("patienceText");
+const summaryDiv = document.getElementById("summary");
 
 // IIFE to call tiemout to hide loading screen
 (function init() {
-  const timeoutVar = setTimeout(() => {
+  loadingScreenTimeout = setTimeout(() => {
     (loadingScreen.style.visibility = "hidden"),
       (contentToShow.style.visibility = "visible");
   }, 3000);
+
+  patienceTextTimeout = setTimeout(() => {
+    patienceText.innerHTML = "Patience, young padawan...";
+  }, 1000);
 })();
 
-function animateToStep(pos, previousPos, currentPos) {
-  bg.style.backgroundPosition = pos + "% 0%";
-
+function alignInfoDiv() {
   infoDiv.innerHTML = position >= 1 ? STEP_INFO[position - 1] : "";
   const isRight = RIGHT_INFO.includes(position);
 
@@ -47,33 +54,59 @@ function animateToStep(pos, previousPos, currentPos) {
   infoDiv.style.right = isRight ? INFO_MARGIN : UNSET;
   infoDiv.style.left = isRight ? UNSET : INFO_MARGIN;
 
+  infoDiv.style.textAlign = isRight ? "right" : "left";
+}
+
+function updateStepDetails() {
   // Show step position info
   stepDetails.innerHTML =
     position >= 1
       ? `Step ${position} out of ${TOTAL_STEP} on the path to digital enlightenment`
       : "";
+}
+
+function checkAndShowSummary() {
+  summaryDiv.style.visibility = position === 8 ? "visible" : "hidden";
+}
+
+function onStepClick(stepPosition) {
+  console.log("stepPosition", stepPosition);
+  console.log("position", position);
+}
+
+function animateToStep(posLocation, previousPos, currentPos) {
+  bg.style.backgroundPosition = posLocation + "% 0%";
+
+  alignInfoDiv();
+  updateStepDetails();
+  checkAndShowSummary();
 
   liItems[currentPos].style.backgroundColor = "white";
   liItems[previousPos].style.backgroundColor = "transparent";
+}
+
+function startAnimation(moveFroward, howManySteps) {
+  // howManySteps is used to make step transition scalable
+  let count = 0;
+  let moveCount = 0;
+  let posLocation = 0;
+  nextButtonInterval = setInterval(() => {
+    moveCount = position * DEFAULT_STEP_MOVE;
+    posLocation = moveFroward ? moveCount + count : moveCount - count;
+    if (count === DEFAULT_STEP_MOVE * howManySteps) {
+      clearInterval(nextButtonInterval);
+    } else {
+      animateToStep(posLocation, position - 1, position);
+      count++;
+    }
+  }, 50);
 }
 
 // Register listener for next button
 nextButton.addEventListener("click", () => {
   if (position < TOTAL_STEP) {
     position += 1;
-    let count = 0;
-    intervalVar = setInterval(() => {
-      if (count === DEFAULT_STEP_MOVE) {
-        clearInterval(intervalVar);
-      } else {
-        animateToStep(
-          position * DEFAULT_STEP_MOVE + count,
-          position - 1,
-          position
-        );
-        count++;
-      }
-    }, 50);
+    startAnimation(true, 1);
   }
 });
 
@@ -81,25 +114,14 @@ nextButton.addEventListener("click", () => {
 prevButton.addEventListener("click", () => {
   if (position > 0) {
     position -= 1;
-    let count = 0;
-    intervalVar = setInterval(async () => {
-      if (count === DEFAULT_STEP_MOVE) {
-        clearInterval(intervalVar);
-      } else {
-        animateToStep(
-          DEFAULT_STEP_MOVE * (position + 1) - count,
-          position + 1,
-          position
-        );
-        count++;
-      }
-    }, 50);
+    startAnimation(false, 1);
   }
 });
 
-// Clear interval on leaving the page
-window.addEventListener("beforeunload", function (e) {
-  if (intervalVar) {
-    clearInterval(intervalVar);
-  }
+// Clear intervals and timeouts on leaving the page
+window.addEventListener("beforeunload", function () {
+  nextButtonInterval && clearInterval(prevButtonInterval);
+  prevButtonInterval && clearInterval(prevButtonInterval);
+  loadingScreenTimeout && clearTimeout(loadingScreenTimeout);
+  patienceTextTimeout && clearTimeout(patienceTextTimeout);
 });
