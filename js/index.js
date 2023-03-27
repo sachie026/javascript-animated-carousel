@@ -1,5 +1,6 @@
 const DEFAULT_STEP_MOVE = 12;
 const TOTAL_STEP = 8;
+const STEP_POSITIONS = [0, 14, 28, 42, 56, 70, 84, 98, 112]; // background position points
 const STEP_INFO = [
   "talent is given true skill is earned",
   "be flexible to change and sturdy in conviction",
@@ -33,12 +34,18 @@ const loadingScreen = document.getElementsByClassName("loading-screen")[0];
 const contentToShow = document.getElementsByClassName("content-to-show")[0];
 const patienceText = document.getElementById("patienceText");
 const summaryDiv = document.getElementById("summary");
+const introTextDiv = document.getElementById("intro-text");
+
+function updateIntroTextVisibility() {
+  introTextDiv.style.visibility = position === 0 ? "visible" : "hidden";
+}
 
 // IIFE to call tiemout to hide loading screen
 (function init() {
   loadingScreenTimeout = setTimeout(() => {
     (loadingScreen.style.visibility = "hidden"),
       (contentToShow.style.visibility = "visible");
+    updateIntroTextVisibility();
   }, 3000);
 
   patienceTextTimeout = setTimeout(() => {
@@ -66,55 +73,87 @@ function updateStepDetails() {
 }
 
 function checkAndShowSummary() {
-  summaryDiv.style.visibility = position === 8 ? "visible" : "hidden";
+  summaryDiv.style.visibility = position >= 8 ? "visible" : "hidden";
 }
 
-function onStepClick(stepPosition) {
-  console.log("stepPosition", stepPosition);
-  console.log("position", position);
+function highlightStep(currentPos) {
+  for (let i = 0; i < liItems.length; i++) {
+    liItems[i].style.backgroundColor =
+      i === currentPos ? "white" : "transparent";
+  }
+}
+
+async function onStepClick(stepPosition) {
+  if (stepPosition !== position) {
+    const moveFroward = stepPosition > position;
+    await startAnimation(
+      moveFroward,
+      Math.abs(stepPosition - position),
+      function () {
+        position = stepPosition;
+        updateRenderElements();
+        highlightStep(stepPosition);
+      }
+    );
+  }
 }
 
 function animateToStep(posLocation, previousPos, currentPos) {
   bg.style.backgroundPosition = posLocation + "% 0%";
+  highlightStep(currentPos);
+}
 
+function updateRenderElements() {
   alignInfoDiv();
   updateStepDetails();
   checkAndShowSummary();
-
-  liItems[currentPos].style.backgroundColor = "white";
-  liItems[previousPos].style.backgroundColor = "transparent";
+  updateIntroTextVisibility();
 }
 
-function startAnimation(moveFroward, howManySteps) {
+function startAnimation(moveFroward, howManySteps, callback) {
   // howManySteps is used to make step transition scalable
-  let count = 0;
-  let moveCount = 0;
-  let posLocation = 0;
+
+  const oldPos = STEP_POSITIONS[position];
+  const newPos = moveFroward
+    ? STEP_POSITIONS[position + howManySteps]
+    : STEP_POSITIONS[position - howManySteps];
+  const newIndex = moveFroward
+    ? position + howManySteps
+    : position - howManySteps;
+  let movePos = oldPos;
+
   nextButtonInterval = setInterval(() => {
-    moveCount = position * DEFAULT_STEP_MOVE;
-    posLocation = moveFroward ? moveCount + count : moveCount - count;
-    if (count === DEFAULT_STEP_MOVE * howManySteps) {
+    if (movePos === newPos) {
       clearInterval(nextButtonInterval);
+      callback && callback();
     } else {
-      animateToStep(posLocation, position - 1, position);
-      count++;
+      animateToStep(movePos, position, newIndex);
+      if (moveFroward) {
+        movePos++;
+      } else {
+        movePos--;
+      }
     }
   }, 50);
 }
 
 // Register listener for next button
-nextButton.addEventListener("click", () => {
-  if (position < TOTAL_STEP) {
-    position += 1;
-    startAnimation(true, 1);
+nextButton.addEventListener("click", async () => {
+  if (position < TOTAL_STEP + 1) {
+    await startAnimation(true, 1, function () {
+      position++;
+      updateRenderElements();
+    });
   }
 });
 
 // Register listener for prev button
-prevButton.addEventListener("click", () => {
+prevButton.addEventListener("click", async () => {
   if (position > 0) {
-    position -= 1;
-    startAnimation(false, 1);
+    await startAnimation(false, 1, function () {
+      position--;
+      updateRenderElements();
+    });
   }
 });
 

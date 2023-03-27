@@ -126,6 +126,7 @@ a {
 #step-list li {
   padding: 0px 8px;
   border-right: 1px dotted;
+  cursor: pointer;
 }
 
 .step-footer {
@@ -158,6 +159,32 @@ a {
 .left {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
+}
+
+#intro-text {
+  position: absolute;
+  top: 0px;
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  padding: 24px;
+  visibility: hidden;
+}
+
+#intro-text .header {
+  font-size: 48px;
+  line-height: 48px;
+  font-family: "klavika-Medium";
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  height: 80%;
+}
+
+#intro-text .footer {
+  font-size: 12px;
+  font-family: "klavika-Light";
 }
 
 #summary {
