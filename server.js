@@ -17,7 +17,7 @@ var mime = {
   woff: "application/font-woff woff",
 };
 
-function onNotFound(res) {
+function onNotFoundPath(res) {
   res.writeHead(404, { "Content-Type": "text/plain" });
   res.write("404 Not Found\n");
   res.end();
@@ -61,7 +61,7 @@ function onWoffPath(res, pathname, m) {
   }
 }
 
-function onImages(res, pathname, m) {
+function onImagesPath(res, pathname, m) {
   var filename = dir + pathname;
   var ext = path.extname(filename).slice(1);
   const contentType =
@@ -89,11 +89,11 @@ http
     } else if ((m = pathname.match(/^\/(js|css)\//))) {
       onJsCssPath(res, pathname, m);
     } else if ((m = pathname.match(/^\/(images)\//))) {
-      onImages(res, pathname, m);
+      onImagesPath(res, pathname, m);
     } else if ((m = pathname.match(/^\/(font)\//))) {
       onWoffPath(res, pathname, m);
     } else {
-      onNotFound(res);
+      onNotFoundPath(res);
     }
   })
   .listen(8000, "localhost");

@@ -83,22 +83,7 @@ function highlightStep(currentPos) {
   }
 }
 
-async function onStepClick(stepPosition) {
-  if (stepPosition !== position) {
-    const moveFroward = stepPosition > position;
-    await startAnimation(
-      moveFroward,
-      Math.abs(stepPosition - position),
-      function () {
-        position = stepPosition;
-        updateRenderElements();
-        highlightStep(stepPosition);
-      }
-    );
-  }
-}
-
-function animateToStep(posLocation, previousPos, currentPos) {
+function animateToStep(posLocation, currentPos) {
   bg.style.backgroundPosition = posLocation + "% 0%";
   highlightStep(currentPos);
 }
@@ -127,7 +112,7 @@ function startAnimation(moveFroward, howManySteps, callback) {
       clearInterval(nextButtonInterval);
       callback && callback();
     } else {
-      animateToStep(movePos, position, newIndex);
+      animateToStep(movePos, newIndex);
       if (moveFroward) {
         movePos++;
       } else {
@@ -135,6 +120,21 @@ function startAnimation(moveFroward, howManySteps, callback) {
       }
     }
   }, 50);
+}
+
+async function onStepClick(stepPosition) {
+  if (stepPosition !== position) {
+    const moveFroward = stepPosition > position;
+    await startAnimation(
+      moveFroward,
+      Math.abs(stepPosition - position),
+      function () {
+        position = stepPosition;
+        updateRenderElements();
+        highlightStep(stepPosition);
+      }
+    );
+  }
 }
 
 // Register listener for next button
