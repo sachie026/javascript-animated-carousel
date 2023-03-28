@@ -76,16 +76,16 @@ function checkAndShowSummary() {
   summaryDiv.style.visibility = position >= 8 ? "visible" : "hidden";
 }
 
-function highlightStep(currentPos) {
+function highlightStep(_currentBgPos) {
   for (let i = 0; i < liItems.length; i++) {
     liItems[i].style.backgroundColor =
-      i === currentPos ? "white" : "transparent";
+      i === _currentBgPos ? "white" : "transparent";
   }
 }
 
-function animateToStep(posLocation, currentPos) {
-  bg.style.backgroundPosition = posLocation + "% 0%";
-  highlightStep(currentPos);
+function animateToStep(_posLocation, _currentBgPos) {
+  bg.style.backgroundPosition = _posLocation + "% 0%";
+  highlightStep(_currentBgPos);
 }
 
 function updateRenderElements() {
@@ -95,16 +95,16 @@ function updateRenderElements() {
   updateIntroTextVisibility();
 }
 
-function startAnimation(moveFroward, howManySteps, callback) {
-  // howManySteps is used to make step transition scalable
+function startAnimation(_moveFroward, _howManySteps, callback) {
+  // _howManySteps is used to make step transition scalable
 
+  const forwardPostion = position + _howManySteps;
+  const backwardPostion = Math.abs(position - _howManySteps);
   const oldPos = STEP_POSITIONS[position];
-  const newPos = moveFroward
-    ? STEP_POSITIONS[position + howManySteps]
-    : STEP_POSITIONS[position - howManySteps];
-  const newIndex = moveFroward
-    ? position + howManySteps
-    : position - howManySteps;
+  const newPos = _moveFroward
+    ? STEP_POSITIONS[forwardPostion]
+    : STEP_POSITIONS[backwardPostion];
+  const newIndex = _moveFroward ? forwardPostion : backwardPostion;
   let movePos = oldPos;
 
   nextButtonInterval = setInterval(() => {
@@ -113,7 +113,7 @@ function startAnimation(moveFroward, howManySteps, callback) {
       callback && callback();
     } else {
       animateToStep(movePos, newIndex);
-      if (moveFroward) {
+      if (_moveFroward) {
         movePos++;
       } else {
         movePos--;
@@ -122,16 +122,16 @@ function startAnimation(moveFroward, howManySteps, callback) {
   }, 50);
 }
 
-async function onStepClick(stepPosition) {
-  if (stepPosition !== position) {
-    const moveFroward = stepPosition > position;
+async function onStepClick(_stepPosition) {
+  if (_stepPosition !== position) {
+    const moveFroward = _stepPosition > position;
     await startAnimation(
       moveFroward,
-      Math.abs(stepPosition - position),
+      Math.abs(_stepPosition - position),
       function () {
-        position = stepPosition;
+        position = _stepPosition;
         updateRenderElements();
-        highlightStep(stepPosition);
+        highlightStep(_stepPosition);
       }
     );
   }
